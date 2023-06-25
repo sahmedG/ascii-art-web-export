@@ -10,19 +10,43 @@ function validateForm() {
     }
 }
 
-function Downloadfile() {
-    const xhttp = new XMLHttpRequest();
-    let text = document.querySelector(".input")
-    let banner = document.querySelector('input[name="Banner"]:checked');
-    let Color = document.querySelector(".newColor")
-    xhttp.open("POST", "/export");
-    xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    const body = {
-        Text: text.value,
-        Banner: banner.value,
-        Newcolor: Color.value,
-    };
-    xhttp.send(JSON.stringify(body));
+// function Downloadfile() {
+//     const xhttp = new XMLHttpRequest();
+//     let text = document.querySelector("#art")
+//     xhttp.open("POST", "/export");
+//     xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+//     const body = {
+//         AsciiArt: text.innerHTML,
+//     };
+//     xhttp.send(JSON.stringify(body));
+    
+// }
+
+function Downloadfile () {
+    let text = document.querySelector("#art")
+    var fileurl = "/export.txt"
+    var requestdata = {AsciiArt: text.innerHTML};
+    fetch(fileurl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestdata)
+      })
+      .then(response => response.blob())
+      .then(blob => {
+      // Create a temporary anchor element
+      var link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'export.txt'; // Replace with the desired file name and extension
+      link.click();
+
+      // Clean up the object URL after the download starts
+      setTimeout(() => URL.revokeObjectURL(link.href), 100);
+    })
+    .catch(error => {
+      console.log('Error:', error);
+    });
 }
 
 function loadDoc() {

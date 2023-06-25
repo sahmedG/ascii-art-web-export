@@ -28,6 +28,10 @@ type RESULT_ASCII_ART struct {
 	ApplyColor string
 }
 
+type RESULT_ASCII_EXPORT struct {
+	AsciiArt     string `json:"AsciiArt"`
+}
+
 //* this function is responsible for processing the GET request for the main page in the case it is requested.
 //* is returns a Bad request error in the case something else rather than "/" is typed
 
@@ -81,7 +85,10 @@ func Gen_ASCII(w http.ResponseWriter, r *http.Request) {
 func FileDownload(w http.ResponseWriter, r *http.Request, Filename string) {
 	fmt.Println("Client requests: " + Filename)
 
-	Openfile, _ := os.Open(Filename)
+	Openfile, err := os.Open(Filename)
+	if err != nil {
+		fmt.Print("file doesn't excist")
+	}
 	defer Openfile.Close() //Close after function return
 
 	//File is found, create and send the correct headers
@@ -111,31 +118,23 @@ func FileDownload(w http.ResponseWriter, r *http.Request, Filename string) {
 
 // exportHandler handle exportation system
 func ExportHandler(w http.ResponseWriter, r *http.Request) {
-	var ascii_art ASCII_ART
+	var ascii_art RESULT_ASCII_EXPORT
 	err := json.NewDecoder(r.Body).Decode(&ascii_art)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if MapFont(ascii_art.Banner) == "" || ascii_art.Text == "" {
-		http.Error(w, "Invalid Banner Type", http.StatusNotFound)
-		http.ServeFile(w, r, "../templates/badrequest.html")
-		return
-	}
 	fmt.Println("expothandler success")
-	ExportTXT(ascii_art.Text, ascii_art.Banner)
+	ExportTXT(ascii_art.AsciiArt)
 	FileDownload(w, r, "../export.txt")
 }
 
 // exportTXT create a .txt file and put ascii-art inside
-func ExportTXT(Text string, Banner string) {
+func ExportTXT(Text string) {
 	file, err := os.Create("../export.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(Banner)
-	fmt.Println(Text)
 	defer file.Close()
-	Result := PrintART(Text, Banner)
-	file.WriteString(Result)
+	file.WriteString(Text)
 }
