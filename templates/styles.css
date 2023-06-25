@@ -135,3 +135,16 @@ h4 {
 .bannerform {
     padding-top: 30px;
 }
+
+.btndown {
+    border: none;
+    color: rgb(241, 24, 24);
+    padding: 12px 30px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  
+  .btndown:hover {
+    background-color: rgb(97, 98, 100);
+  }
+  

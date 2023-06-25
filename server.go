@@ -4,23 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net"
+	"log"
 	"net/http"
-	"text/template"
-	"time"
+	"os"
+	"strconv"
 )
 
 /*
 This file is what could be considered the router. it redirects all methods sent by the client, and
 returns appropriate responses and response codes
 */
-
-// * the code below initializes all HTML templates in the ascii-art-web/templates directory, including css
-var tpl *template.Template
-
-func init() {
-	tpl = template.Must(template.ParseGlob("../templates/*"))
-}
 
 // * we create 2 structs. One Unmarshal JSON data sent by the client to the golang server as golang objects
 type ASCII_ART struct {
@@ -63,6 +56,7 @@ func Gen_ASCII(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
+
 	err := json.NewDecoder(r.Body).Decode(&ascii_art)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -82,36 +76,66 @@ func Gen_ASCII(w http.ResponseWriter, r *http.Request) {
 	ascii_result.ApplyColor = ascii_art.Newcolor
 	jsonENC := json.NewEncoder(w)
 	jsonENC.Encode(ascii_result)
-	fmt.Println((ascii_art.Text))
-	fmt.Println((ascii_art.Banner))
-	fmt.Println((ascii_art.Newcolor))
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	url := "http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png"
+func FileDownload(w http.ResponseWriter, r *http.Request, Filename string) {
+	fmt.Println("Client requests: " + Filename)
 
-	timeout := time.Duration(5) * time.Second
-	transport := &http.Transport{
-		ResponseHeaderTimeout: timeout,
-		Dial: func(network, addr string) (net.Conn, error) {
-			return net.DialTimeout(network, addr, timeout)
-		},
-		DisableKeepAlives: true,
-	}
-	client := &http.Client{
-		Transport: transport,
-	}
-	resp, err := client.Get(url)
+	Openfile, _ := os.Open(Filename)
+	defer Openfile.Close() //Close after function return
+
+	//File is found, create and send the correct headers
+
+	//Get the Content-Type of the file
+	//Create a buffer to store the header of the file in
+	FileHeader := make([]byte, 512)
+	//Copy the headers into the FileHeader buffer
+	Openfile.Read(FileHeader)
+	//Get content type of file
+	FileContentType := http.DetectContentType(FileHeader)
+
+	//Get the file size
+	FileStat, _ := Openfile.Stat()                     //Get info from file
+	FileSize := strconv.FormatInt(FileStat.Size(), 10) //Get file size as a string
+
+	//Send the headers
+	w.Header().Set("Content-Disposition", "attachment; filename="+Filename)
+	w.Header().Set("Content-Type", FileContentType)
+	w.Header().Set("Content-Length", FileSize)
+
+	//Send the file
+	//We read 512 bytes from the file already, so we reset the offset back to 0
+	Openfile.Seek(0, 0)
+	io.Copy(w, Openfile) //'Copy' the file to the client
+}
+
+// exportHandler handle exportation system
+func ExportHandler(w http.ResponseWriter, r *http.Request) {
+	var ascii_art ASCII_ART
+	err := json.NewDecoder(r.Body).Decode(&ascii_art)
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	defer resp.Body.Close()
+	if MapFont(ascii_art.Banner) == "" || ascii_art.Text == "" {
+		http.Error(w, "Invalid Banner Type", http.StatusNotFound)
+		http.ServeFile(w, r, "../templates/badrequest.html")
+		return
+	}
+	fmt.Println("expothandler success")
+	ExportTXT(ascii_art.Text, ascii_art.Banner)
+	FileDownload(w, r, "../export.txt")
+}
 
-	//copy the relevant headers. If you want to preserve the downloaded file name, extract it with go's url parser.
-	w.Header().Set("Content-Disposition", "attachment; filename=Wiki.png")
-	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
-	w.Header().Set("Content-Length", r.Header.Get("Content-Length"))
-
-	//stream the body to the client without fully loading it into memory
-	io.Copy(w, resp.Body)
+// exportTXT create a .txt file and put ascii-art inside
+func ExportTXT(Text string, Banner string) {
+	file, err := os.Create("../export.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(Banner)
+	fmt.Println(Text)
+	defer file.Close()
+	Result := PrintART(Text, Banner)
+	file.WriteString(Result)
 }

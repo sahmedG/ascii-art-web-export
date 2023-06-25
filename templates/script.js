@@ -11,7 +11,18 @@ function validateForm() {
 }
 
 function Downloadfile() {
-    
+    const xhttp = new XMLHttpRequest();
+    let text = document.querySelector(".input")
+    let banner = document.querySelector('input[name="Banner"]:checked');
+    let Color = document.querySelector(".newColor")
+    xhttp.open("POST", "/export");
+    xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+    const body = {
+        Text: text.value,
+        Banner: banner.value,
+        Newcolor: Color.value,
+    };
+    xhttp.send(JSON.stringify(body));
 }
 
 function loadDoc() {
