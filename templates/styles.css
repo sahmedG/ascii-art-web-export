@@ -1,0 +1,137 @@
+body {
+    background-color: #302f2f;
+    height: 100vh;
+}
+
+:root {
+    --form-control-color: rebeccapurple;
+    font-weight: bolder;
+    color: #e73795;
+}
+
+.btndown {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px;
+}
+.containermain {
+    align-content: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30vw;
+    height: 30vh;
+    padding-bottom: 25px;
+    flex-direction: column;
+    padding-bottom: 100px;
+    padding: 10px;
+    gap: 8px;
+    border-bottom-width: 20px;
+    font-weight: bolder;
+}
+
+.result {
+    position: relative;
+    background-color: #302f2f;
+    align-content: center;
+    justify-content: center;
+    border-top: 100px;
+    border-bottom: 0px;
+    border: 5px solid black;
+    border-radius: 4px;
+    margin: auto;
+    margin-top: 60px;
+    margin-bottom: 100px;
+    color: whitesmoke;
+    width: 80vw;
+    height: 50vh;
+    padding: 10px;
+    gap: 8px;
+    overflow-y:auto;
+    overflow-x:auto;
+}
+h1 {
+    /*font-family: "IBM Plex Mono", "Courier New", Courier, monospace;*/
+    text-align: center;
+}
+
+h2 {
+    /*font-family: "IBM Plex Mono", "Courier New", Courier, monospace;*/
+    text-align: center;
+}
+
+
+.containForm {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding-left: 25px;
+    justify-content: center;
+}
+.textfield {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: centers;
+}
+
+h4 {
+    font-family: "Courier New", Courier, monospace;
+}
+
+.input {
+    border-radius: 10px;
+    outline: 2px solid #9e6183;
+    border: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: #e2e2e2;
+    outline-offset: 3px;
+    height: 30px;
+    padding: 10px 1rem;
+    transition: 0.25s;
+}
+
+.input:focus {
+    outline-offset: 5px;
+    background-color: #fff;
+}
+
+.radios {
+    padding-bottom: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-family: sans-serif;
+}
+
+.SubmitBtn {
+    --bg: #000;
+    --hover-bg: #ff90e8;
+    --hover-text: #000;
+    color: #fff;
+    border: 1px solid var(--bg);
+    border-radius: 4px;
+    padding: 0.8em 2em;
+    background: var(--bg);
+    transition: 0.2s;
+}
+
+.SubmitBtn:hover {
+    color: var(--hover-text);
+    transform: translate(-0.25rem, -0.25rem);
+    background: var(--hover-bg);
+    box-shadow: 0.25rem 0.25rem var(--bg);
+}
+
+.SubmitBtn:active {
+    transform: translate(0);
+    box-shadow: none;
+}
+
+.bannerform {
+    padding-top: 30px;
+}

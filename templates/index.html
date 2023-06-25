@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=\, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css">
+  <script type="text/javascript" src="script.js"></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100&display=swap");
+  </style>
+
+  <title>ascii art form</title>
+</head>
+
+<body>
+  <!--this form is yet to be modified-->
+  <div class="containermain">
+    <h2>Ascii-art-web</h2>
+    <div class="containForm">
+      <div class="color-wrapper" style="margin-top: -30px; padding-bottom: 25px;padding-top: 50px;">
+        <!--        <label class="select_color" for="color" style="color:white;"><p style="font-family: sans-serif;">Choose output color:</p></label>-->
+        <input class ="newColor" type="color" name="color" value="#ffffff" style="margin-top: -25px;">  
+    </div>
+      <textarea id="textarea" placeholder="Enter your text" rows="4" cols="3" name="Text" class="input" required></textarea>
+      <div class="bannerform">
+        <div class="radios">
+          <input type="radio" id="Banner" value="standard" name="Banner" required />
+          <label for="Bannerstan" class="Label">Standard</label>
+          <input type="radio" id="Banner" value="shadow" name="Banner" required/>
+          <label for="bannershadow" class="Label">Shadow</label>
+          <input type="radio" id="Banner" value="thinkertoy" name="Banner" required/>
+          <label for="Bannerthink" class="Label" class="Label">Thinkertoy</label>
+        </div>
+      </div>
+    <button id ="SubmitBtn" class="SubmitBtn" onclick="validateForm()">Generate Ascii</button>
+  </div>
+  </div>
+  <div>
+    <div id="result" class="result">
+      <pre id="art"></pre>
+    <div>
+      <button id="btndown" class="btndown" value="Download" onclick="Downloadfile()">Download</button>
+      <script>
+        document.querySelector('#btndown').disabled = true;
+      </script>
+    </div>
+    </div>
+  </div>
+</body>
+</html>
