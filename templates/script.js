@@ -10,18 +10,6 @@ function validateForm() {
     }
 }
 
-// function Downloadfile() {
-//     const xhttp = new XMLHttpRequest();
-//     let text = document.querySelector("#art")
-//     xhttp.open("POST", "/export");
-//     xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-//     const body = {
-//         AsciiArt: text.innerHTML,
-//     };
-//     xhttp.send(JSON.stringify(body));
-    
-// }
-
 function Downloadfile () {
     let text = document.querySelector("#art")
     var fileurl = "/export.txt"
@@ -56,16 +44,22 @@ function loadDoc() {
     let Color = document.querySelector(".newColor")
     invertColor(Color.value)
     xhttp.onload = function () {
+        if (this.status === 500){
+            //alert("internal 500 error")
+            window.open("http://localhost:8080/internalerror.html","_self")
+        } else if (this.status === 400){
+            window.open("http://localhost:8080/badrequest.html","_self")
+        } else {
         var parsedData = JSON.parse(this.responseText);                 // Parse JSON
         //var formattedText = parsedData.Result.replace(/\n/g, "<br>");   // Replace the lines with <br>
         document.getElementById("art").innerHTML = parsedData.Result;
         document.getElementById("art").value = parsedData.Result;
         document.getElementById("art").style.color = parsedData.ApplyColor;
         document.querySelector("#btndown").disabled = false;
+        }
     }
     xhttp.open("POST", "/ascii-art");
     xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    
     const body = {
         Text: text.value,
         Banner: banner.value,
@@ -96,5 +90,8 @@ function invertColor(hex) {
     } else {
         document.getElementById("result").style.backgroundColor = "#302f2f"
     }
+
+
+
 }
 

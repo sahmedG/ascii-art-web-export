@@ -29,13 +29,14 @@ type RESULT_ASCII_ART struct {
 }
 
 type RESULT_ASCII_EXPORT struct {
-	AsciiArt     string `json:"AsciiArt"`
+	AsciiArt string `json:"AsciiArt"`
 }
 
 //* this function is responsible for processing the GET request for the main page in the case it is requested.
 //* is returns a Bad request error in the case something else rather than "/" is typed
 
 func Handler(w http.ResponseWriter, r *http.Request) {
+
 	switch r.Method {
 	//* if the HTTP method is GET, serve the HTML files in the template directory, otherwise, serve the
 	//* custom HTML for bad requests
@@ -52,7 +53,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 //* this function basically appends the ascii art to the result div in HTML
 
 func Gen_ASCII(w http.ResponseWriter, r *http.Request) {
-	//
 	var ascii_art ASCII_ART
 	var ascii_result RESULT_ASCII_ART
 
@@ -66,20 +66,20 @@ func Gen_ASCII(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	if len(ascii_art.Text) > 255 {
 		http.Error(w, "Too much letters خوك", http.StatusBadRequest)
 		return
+	}
 
+	if MapFont(ascii_art.Banner) == "Error 500" {
+		http.Error(w, "Error 500: internarl server error ", http.StatusInternalServerError)
+	} else {
+		ascii_result.Result = PrintART(ascii_art.Text, ascii_art.Banner)
+		ascii_result.ApplyColor = ascii_art.Newcolor
+		jsonENC := json.NewEncoder(w)
+		jsonENC.Encode(ascii_result)
 	}
-	if MapFont(ascii_art.Banner) == "" || ascii_art.Text == "" {
-		http.Error(w, "Invalid Banner Type", http.StatusNotFound)
-		http.ServeFile(w, r, "../templates/badrequest.html")
-		return
-	}
-	ascii_result.Result = PrintART(ascii_art.Text, ascii_art.Banner)
-	ascii_result.ApplyColor = ascii_art.Newcolor
-	jsonENC := json.NewEncoder(w)
-	jsonENC.Encode(ascii_result)
 }
 
 func FileDownload(w http.ResponseWriter, r *http.Request, Filename string) {
