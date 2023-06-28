@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 /*
@@ -124,6 +125,7 @@ func ExportHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	fmt.Println("expothandler success")
 	ExportTXT(ascii_art.AsciiArt)
 	FileDownload(w, r, "../export.txt")
@@ -131,10 +133,12 @@ func ExportHandler(w http.ResponseWriter, r *http.Request) {
 
 // exportTXT create a .txt file and put ascii-art inside
 func ExportTXT(Text string) {
+	NewText := strings.ReplaceAll(Text, "&lt;", "<")
+	NewText = strings.ReplaceAll(NewText, "&gt;", ">")
 	file, err := os.Create("../export.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	file.WriteString(Text)
+	file.WriteString(NewText)
 }

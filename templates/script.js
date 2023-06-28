@@ -43,12 +43,12 @@ function loadDoc() {
     let banner = document.querySelector('input[name="Banner"]:checked');
     let Color = document.querySelector(".newColor")
     invertColor(Color.value)
+    let path = xhttp.responseURL.replace("/ascii-art", "");
     xhttp.onload = function () {
         if (this.status === 500){
-            //alert("internal 500 error")
-            window.open("http://localhost:8080/internalerror.html","_self")
+            window.open(path+"/internalerror.html","_self")
         } else if (this.status === 400){
-            window.open("http://localhost:8080/badrequest.html","_self")
+            window.open(path+"/badrequest.html","_self")
         } else {
         var parsedData = JSON.parse(this.responseText);                 // Parse JSON
         //var formattedText = parsedData.Result.replace(/\n/g, "<br>");   // Replace the lines with <br>
