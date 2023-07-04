@@ -31,19 +31,26 @@ type RESULT_ASCII_ART struct {
 
 type RESULT_ASCII_EXPORT struct {
 	AsciiArt string `json:"AsciiArt"`
+	filetype string `json:"filetype"`
 }
 
 //* this function is responsible for processing the GET request for the main page in the case it is requested.
 //* is returns a Bad request error in the case something else rather than "/" is typed
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println(r.URL.Path)
 	switch r.Method {
 	//* if the HTTP method is GET, serve the HTML files in the template directory, otherwise, serve the
 	//* custom HTML for bad requests
 	case "GET":
 		r.ParseForm()
 		path := "../templates" + r.URL.Path
+		_, err := os.Open(path)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			http.ServeFile(w, r, "../templates/pagenotfound.html")
+			return
+		}
 		http.ServeFile(w, r, path)
 	default:
 		w.WriteHeader(http.StatusBadRequest)
@@ -127,15 +134,16 @@ func ExportHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("expothandler success")
-	ExportTXT(ascii_art.AsciiArt)
-	FileDownload(w, r, "../export.txt")
+	fmt.Println(ascii_art.filetype)
+	ExportTXT(ascii_art.AsciiArt,ascii_art.filetype)
+	FileDownload(w, r, "../export"+ascii_art.filetype)
 }
 
 // exportTXT create a .txt file and put ascii-art inside
-func ExportTXT(Text string) {
+func ExportTXT(Text,fstype string) {
 	NewText := strings.ReplaceAll(Text, "&lt;", "<")
 	NewText = strings.ReplaceAll(NewText, "&gt;", ">")
-	file, err := os.Create("../export.txt")
+	file, err := os.Create("../export"+fstype)
 	if err != nil {
 		log.Fatal(err)
 	}

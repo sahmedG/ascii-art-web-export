@@ -43,8 +43,13 @@
       <pre id="art"></pre>
     <div>
       <button id="btndown" class="btndown" value="Download" onclick="Downloadfile()"><i class="fa fa-download"></i>Download</button>
+      <select class="btndown" name="filetype" id="fstype" style="margin-right:200px ;">
+        <option value=".txt">Text</option>
+        <option value=".doc">word document</option>
+      </select>
       <script>
         document.querySelector('#btndown').disabled = true;
+        document.querySelector('#fstype').disabled = true;
       </script>
     </div>
     </div>

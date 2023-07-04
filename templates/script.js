@@ -12,8 +12,9 @@ function validateForm() {
 
 function Downloadfile () {
     let text = document.querySelector("#art")
-    var fileurl = "/export.txt"
-    var requestdata = {AsciiArt: text.innerHTML};
+    let fstype = document.querySelector('#fstype')
+    var fileurl = "/export"
+    var requestdata = {AsciiArt: text.innerHTML,filetype:fstype.value};
     fetch(fileurl, {
         method: 'POST',
         headers: {
@@ -26,7 +27,7 @@ function Downloadfile () {
       // Create a temporary anchor element
       var link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = 'export.txt'; // Replace with the desired file name and extension
+      link.download = 'export'+fstype.value; // Replace with the desired file name and extension
       link.click();
 
       // Clean up the object URL after the download starts
@@ -56,6 +57,7 @@ function loadDoc() {
         document.getElementById("art").value = parsedData.Result;
         document.getElementById("art").style.color = parsedData.ApplyColor;
         document.querySelector("#btndown").disabled = false;
+        document.querySelector("#fstype").disabled = false;
         }
     }
     xhttp.open("POST", "/ascii-art");
