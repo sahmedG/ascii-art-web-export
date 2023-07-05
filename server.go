@@ -3,6 +3,7 @@ package webart
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -31,14 +32,14 @@ type RESULT_ASCII_ART struct {
 
 type RESULT_ASCII_EXPORT struct {
 	AsciiArt string `json:"AsciiArt"`
-	filetype string `json:"filetype"`
+	Filetype string `json:"Filetype"`
+	ColorValue string `json:"ColorValue"`
 }
 
 //* this function is responsible for processing the GET request for the main page in the case it is requested.
 //* is returns a Bad request error in the case something else rather than "/" is typed
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
 	switch r.Method {
 	//* if the HTTP method is GET, serve the HTML files in the template directory, otherwise, serve the
 	//* custom HTML for bad requests
@@ -132,21 +133,40 @@ func ExportHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("expothandler success")
-	fmt.Println(ascii_art.filetype)
-	ExportTXT(ascii_art.AsciiArt,ascii_art.filetype)
-	FileDownload(w, r, "../export"+ascii_art.filetype)
+	if ascii_art.Filetype == ".html" {
+		GenerateHTML(w, r, ascii_art.AsciiArt, ascii_art.ColorValue)
+	} else {
+		fmt.Println("expothandler success")
+		ExportTXT(ascii_art.AsciiArt, ascii_art.Filetype)
+		FileDownload(w, r, "../export"+ascii_art.Filetype)
+	}
 }
 
 // exportTXT create a .txt file and put ascii-art inside
-func ExportTXT(Text,fstype string) {
+func ExportTXT(Text, fstype string) {
+
 	NewText := strings.ReplaceAll(Text, "&lt;", "<")
 	NewText = strings.ReplaceAll(NewText, "&gt;", ">")
-	file, err := os.Create("../export"+fstype)
+	file, err := os.Create("../export" + fstype)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 	file.WriteString(NewText)
+}
+
+func GenerateHTML(w http.ResponseWriter, r *http.Request, Text,color string) {
+	t, err := template.ParseFiles("../templates/export.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	items := struct {
+		Result string
+		COLOR string
+	}{
+		Result: Text,
+		COLOR: color,
+	}
+	fmt.Println(color)
+	t.Execute(w, items)
 }

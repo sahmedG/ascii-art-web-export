@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=\, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"
+      integrity="sha256-c9vxcXyAG4paArQG3xk6DjyW/9aHxai2ef9RpMWO44A=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
 
   <script type="text/javascript" src="script.js"></script>
   <style>
@@ -46,6 +50,10 @@
       <select class="btndown" name="filetype" id="fstype" style="margin-right:200px ;">
         <option value=".txt">Text</option>
         <option value=".doc">word document</option>
+        <option value=".html">Webpage</option>
+        <option value=".ps">PostScript</option>
+        <option value=".rtf">Rich text format</option>
+        <option value=".pdf">PDF</option>
       </select>
       <script>
         document.querySelector('#btndown').disabled = true;

@@ -1,5 +1,7 @@
 // This function will make the request to the back-end and will modify the html
+
 function validateForm() {
+    
     let x = document.querySelector("#textarea").value;
     //let y = document.querySelector("#Banner").value;
     if (x != "") {
@@ -10,11 +12,19 @@ function validateForm() {
     }
 }
 
+
 function Downloadfile () {
     let text = document.querySelector("#art")
     let fstype = document.querySelector('#fstype')
+    let Color = document.querySelector(".newColor").value
     var fileurl = "/export"
-    var requestdata = {AsciiArt: text.innerHTML,filetype:fstype.value};
+    if (fstype.value === ".pdf") {
+        SavetoPDF()
+        return
+    }
+    var requestdata = {AsciiArt: text.innerHTML,
+        Filetype: fstype.value,
+        ColorValue: Color};
     fetch(fileurl, {
         method: 'POST',
         headers: {
@@ -92,8 +102,14 @@ function invertColor(hex) {
     } else {
         document.getElementById("result").style.backgroundColor = "#302f2f"
     }
-
-
-
 }
 
+function SavetoPDF() {
+    domtoimage.toPng(document.getElementById('art'))
+        .then(function (blob) {
+        var pdf = new jsPDF('l', 'pt', [$('#art').width(), $('#art').height()]);
+        pdf.addImage(blob, 'JPG', -10, -10, $('#art').width(), $('#art').height());
+        pdf.save("test.pdf");
+        that.options.api.optionsChanged();
+    });
+}
